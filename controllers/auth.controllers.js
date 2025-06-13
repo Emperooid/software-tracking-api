@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { JWT_EXPIRATION, JWT_SECRET } from "../config/env.js";
 
 export const signUp =async (req, res, next) => {
     //the basis of my signup logic
@@ -22,9 +23,20 @@ export const signUp =async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash (password, salt);
 
-        const newUser = await user.Create ([{name, email, password: hashedPassword}],{session});
+        const newUsers = await User.Create ([{name, email, password: hashedPassword}],{session});
 
-        const token = jwt.sign({userId: newUser[0]._id})
+        const token = jwt.sign({userId: newUsers[0]._id}, JWT_SECRET, {expiresIn: JWT_EXPIRATION});
+
+        await session.commitTransaction();
+        session.endSession();
+        res.status(201).json({
+            success: true,
+            message: "User created successfully",
+            data: {
+                token,
+                user: newUsers[0],
+            }
+        });
 
     }
 

@@ -19,6 +19,8 @@ app.use("/api/v1/users", userRouter);
 
 app.use(errorMiddleware);
 
+
+
 app.get("/", (req, res) => {
   res.send({ body: "Hello World!" });
 });
