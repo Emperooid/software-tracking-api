@@ -26,8 +26,9 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, async () => {
+     await connectToDatabase();
+
   console.log(`tracking software server is running on http://localhost:${PORT}`);
-   await connectToDatabase();
 });
 
 export default app;
